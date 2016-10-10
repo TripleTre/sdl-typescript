@@ -1,17 +1,12 @@
 "use strict";
 const ffi_1 = require('../util/ffi');
 const types_1 = require('../types/types');
-void ;
-void ;
-/**
- * 关闭指定的 SDL 子系统
- * @param flags 要关闭的子系统
- */
-SDL_QuitSubSystem: 
 let lib = Object.create(null);
 ffi_1.library({
     SDL_Init: [types_1.default.int32, [types_1.default.uint32]],
-    SDL_InitSubSystem: [types_1.default.int32, [types_1.default.uint32]]
+    SDL_InitSubSystem: [types_1.default.int32, [types_1.default.uint32]],
+    SDL_QuitSubSystem: [types_1.default.void, [types_1.default.uint32]],
+    SDL_Quit: [types_1.default.void, [types_1.default.void]]
 }, lib);
 var initOption;
 (function (initOption) {
@@ -25,5 +20,11 @@ var initOption;
     initOption[initOption["SDL_INIT_NOPARACHUTE"] = 1048576] = "SDL_INIT_NOPARACHUTE";
     initOption[initOption["SDL_INIT_EVERYTHING"] = 1077809] = "SDL_INIT_EVERYTHING";
 })(initOption || (initOption = {}));
-lib.;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = {
+    lib: lib,
+    enum: {
+        initOption
+    }
+};
 //# sourceMappingURL=sdl.js.map

@@ -2,7 +2,7 @@
 const ref_1 = require('ref');
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = {
-    VOID: ref_1.types.void,
+    void: ref_1.types.void,
     int8: ref_1.types.int8,
     uint8: ref_1.types.uint8,
     int16: ref_1.types.int16,

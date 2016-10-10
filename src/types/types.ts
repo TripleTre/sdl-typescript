@@ -1,7 +1,7 @@
 import {types} from 'ref';
 
 export default {
-  VOID: types.void,
+  void: types.void,
   int8: types.int8,
   uint8: types.uint8,
   int16: types.int16,
