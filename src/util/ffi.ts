@@ -1,4 +1,4 @@
-import ffi from 'ffi';
+import * as ffi from 'ffi';
 
 declare var process;
 let file = process.platform === 'win32' ? 'SDL2' : 'libSDL2';

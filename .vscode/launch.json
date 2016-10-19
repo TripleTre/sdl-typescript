@@ -5,7 +5,7 @@
       "name": "启动",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/src/structs/test.ts",
+      "program": "${workspaceRoot}/src/test.ts",
       "stopOnEntry": false,
       "args": [],
       "cwd": "${workspaceRoot}",
@@ -19,7 +19,7 @@
       },
       "console": "internalConsole",
       "sourceMaps": true,
-      "outDir": "${workspaceRoot}/build"
+       "outDir": "${workspaceRoot}/out"
     },
     {
       "name": "附加",
