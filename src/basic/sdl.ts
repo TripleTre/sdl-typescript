@@ -34,7 +34,7 @@ library({
   SDL_WasInit:       [types.uint32, [types.uint32]]
 }, lib);
 
-export enum initOption {
+export enum InitOption {
   /**
    * timer subsystem
    */

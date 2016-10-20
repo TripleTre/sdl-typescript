@@ -9,45 +9,45 @@ ffi_1.library({
     SDL_Quit: [types_1.default.void, []],
     SDL_WasInit: [types_1.default.uint32, [types_1.default.uint32]]
 }, lib);
-(function (initOption) {
+(function (InitOption) {
     /**
      * timer subsystem
      */
-    initOption[initOption["SDL_INIT_TIMER"] = 1] = "SDL_INIT_TIMER";
+    InitOption[InitOption["SDL_INIT_TIMER"] = 1] = "SDL_INIT_TIMER";
     /**
      * audio subsystem
      */
-    initOption[initOption["SDL_INIT_AUDIO"] = 16] = "SDL_INIT_AUDIO";
+    InitOption[InitOption["SDL_INIT_AUDIO"] = 16] = "SDL_INIT_AUDIO";
     /**
      * video subsystem. Automatically initializes the SDL_INIT_EVENTS subsystem
      */
-    initOption[initOption["SDL_INIT_VIDEO"] = 32] = "SDL_INIT_VIDEO";
+    InitOption[InitOption["SDL_INIT_VIDEO"] = 32] = "SDL_INIT_VIDEO";
     /**
      * joystick subsystem
      */
-    initOption[initOption["SDL_INIT_JOYSTICK"] = 512] = "SDL_INIT_JOYSTICK";
+    InitOption[InitOption["SDL_INIT_JOYSTICK"] = 512] = "SDL_INIT_JOYSTICK";
     /**
      * haptic (force feedback) subsystem
      */
-    initOption[initOption["SDL_INIT_HAPTIC"] = 4096] = "SDL_INIT_HAPTIC";
+    InitOption[InitOption["SDL_INIT_HAPTIC"] = 4096] = "SDL_INIT_HAPTIC";
     /**
      * controller subsystem. Automatically initializes the SDL_INIT_JOYSTICK subsystem
      */
-    initOption[initOption["SDL_INIT_GAMECONTROLLER"] = 8192] = "SDL_INIT_GAMECONTROLLER";
+    InitOption[InitOption["SDL_INIT_GAMECONTROLLER"] = 8192] = "SDL_INIT_GAMECONTROLLER";
     /**
      * events subsystem
      */
-    initOption[initOption["SDL_INIT_EVENTS"] = 16384] = "SDL_INIT_EVENTS";
+    InitOption[InitOption["SDL_INIT_EVENTS"] = 16384] = "SDL_INIT_EVENTS";
     /**
      * compatibility; this flag is ignored
      */
-    initOption[initOption["SDL_INIT_NOPARACHUTE"] = 1048576] = "SDL_INIT_NOPARACHUTE";
+    InitOption[InitOption["SDL_INIT_NOPARACHUTE"] = 1048576] = "SDL_INIT_NOPARACHUTE";
     /**
      * all of the above subsystems
      */
-    initOption[initOption["SDL_INIT_EVERYTHING"] = 1077809] = "SDL_INIT_EVERYTHING";
-})(exports.initOption || (exports.initOption = {}));
-var initOption = exports.initOption;
+    InitOption[InitOption["SDL_INIT_EVERYTHING"] = 1077809] = "SDL_INIT_EVERYTHING";
+})(exports.InitOption || (exports.InitOption = {}));
+var InitOption = exports.InitOption;
 /**
  * 初始化诸如: timer, audio, video 等SDL子系统， 这个函数必须在调任任何 SDL 函数前调用。
  * @param {flags} 初始化选项

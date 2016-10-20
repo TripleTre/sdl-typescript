@@ -1,5 +1,9 @@
-import {init, initOption, wasInit} from './basic/sdl'
+import {init, InitOption, wasInit} from './basic/sdl';
+import {setError, getError, clearError} from './basic/sdl-error';
+import {log, logCritial, LogCategory, logDebug} from './basic/sdl-log';
 
-console.log('<>', initOption.SDL_INIT_EVERYTHING);
-console.log(init(initOption.SDL_INIT_EVERYTHING));
-console.log(wasInit(initOption.SDL_INIT_EVERYTHING));
+console.log(Date.now());
+for(let i = 1000000; i > 0; i--) {
+  init(InitOption.SDL_INIT_VIDEO);
+}
+console.log(Date.now());
