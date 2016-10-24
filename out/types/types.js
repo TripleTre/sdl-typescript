@@ -1,5 +1,6 @@
 "use strict";
 const ref_1 = require('ref');
+const ref = require('ref');
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = {
     void: ref_1.types.void,
@@ -26,6 +27,7 @@ exports.default = {
     ulong: ref_1.types.ulong,
     longlong: ref_1.types.longlong,
     ulonglong: ref_1.types.ulonglong,
-    sizet: ref_1.types.size_t
+    sizet: ref_1.types.size_t,
+    void_p: ref.refType(ref_1.types.void)
 };
 //# sourceMappingURL=types.js.map

@@ -1,5 +1,6 @@
 "use strict";
 const ffi_1 = require('../util/ffi');
+const ffi = require('ffi');
 const types_1 = require('../types/types');
 const ref = require('ref');
 /**
@@ -41,14 +42,18 @@ var LogCategory = exports.LogCategory;
     LogCritical[LogCritical["SDL_NUM_LOG_PRIORITIES"] = 7] = "SDL_NUM_LOG_PRIORITIES";
 })(exports.LogCritical || (exports.LogCritical = {}));
 var LogCritical = exports.LogCritical;
+let SDL_LogOutputFunction = ffi.Function(types_1.default.void, [ref.refType(types_1.default.void), types_1.default.int32, types_1.default.uint32, types_1.default.CString]);
+let SDL_LogOutputFunction_P = ref.refType(SDL_LogOutputFunction);
 let lib = Object.create(null);
 ffi_1.library({
     SDL_Log: [types_1.default.void, [types_1.default.CString]],
     SDL_LogCritical: [types_1.default.void, [types_1.default.int32, types_1.default.CString]],
     SDL_LogDebug: [types_1.default.void, [types_1.default.int32, types_1.default.CString]],
     SDL_LogError: [types_1.default.void, [types_1.default.int32, types_1.default.CString]],
+    SDL_LogGetOutputFunction: [types_1.default.void, [SDL_LogOutputFunction_P, ref.refType(types_1.default.void_p)]],
+    SDL_LogGetPriority: [types_1.default.uint32, [types_1.default.int32]],
     SDL_LogInfo: [types_1.default.void, [types_1.default.int32, types_1.default.CString]],
-    SDL_LogSetOutputFunction: [types_1.default.void, [SDL_LogOutputFunction, ref.refType(types_1.default.void)]],
+    SDL_LogSetOutputFunction: [types_1.default.void, [SDL_LogOutputFunction, types_1.default.void_p]],
 }, lib);
 function log(message) {
     lib.SDL_Log(message);
@@ -74,4 +79,27 @@ function logInfo(category, message) {
     lib.SDL_LogInfo(category, message);
 }
 exports.logInfo = logInfo;
+/**
+ * 自定义 log 方法。
+ * @param {callback} 自定义的 log 方法， 回调函数的第一个参数是一个空指针，第二个参数是消息类别，
+ *                   第三个参数是消息优先级， 第四个参数是消息体。
+ */
+function setOutputFunction(callback) {
+    let cb = SDL_LogOutputFunction.toPointer(callback);
+    lib.SDL_LogSetOutputFunction(cb, null);
+}
+exports.setOutputFunction = setOutputFunction;
+function getOutputFunction() {
+    let ret = SDL_LogOutputFunction.toPointer(function () { });
+    lib.SDL_LogGetOutputFunction(ret, null);
+    return SDL_LogOutputFunction.toFunction(ret);
+}
+exports.getOutputFunction = getOutputFunction;
+/**
+ * 返回对应 log 种类的默认优先级。
+ */
+function getPriority(category) {
+    return lib.SDL_LogGetPriority(category);
+}
+exports.getPriority = getPriority;
 //# sourceMappingURL=sdl-log.js.map

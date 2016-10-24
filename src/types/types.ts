@@ -1,4 +1,5 @@
 import {types} from 'ref';
+import * as ref from 'ref';
 
 export default {
   void: types.void,
@@ -25,5 +26,6 @@ export default {
   ulong: types.ulong,
   longlong: types.longlong,
   ulonglong: types.ulonglong,
-  sizet: types.size_t
+  sizet: types.size_t,
+  void_p: ref.refType(types.void)
 }
