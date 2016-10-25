@@ -45,7 +45,7 @@ export enum LogCritical {
 let SDL_LogOutputFunction = ffi.Function(types.void, [ref.refType(types.void), types.int32, types.uint32, types.CString]);
 let SDL_LogOutputFunction_P = ref.refType(SDL_LogOutputFunction);
 
-let lib = Object.create(null);
+let lib = {};
 library({
   SDL_Log:                  [types.void, [types.CString]],
   SDL_LogCritical:          [types.void, [types.int32, types.CString]],
@@ -55,6 +55,12 @@ library({
   SDL_LogGetPriority:       [types.uint32, [types.int32]],
   SDL_LogInfo:              [types.void, [types.int32, types.CString]],
   SDL_LogSetOutputFunction: [types.void, [SDL_LogOutputFunction, types.void_p]],
+  SDL_LogMessage:           [types.void, [types.int32, types.uint32, types.CString]],
+  SDL_LogResetPriorities:   [types.void, [types.void]],
+  SDL_LogSetAllPriority:    [types.void, [types.uint32]],
+  SDL_LogSetPriority:       [types.void, [types.int32, types.uint32]],
+  SDL_LogVerbose:           [types.void, [types.int32, types.CString]],
+  SDL_LogWarn:              [types.void, [types.void, types.int32, types.CString]]
 }, lib);
 
 export function log(message: string): void {
@@ -102,4 +108,29 @@ export function getOutputFunction(): Function {
  */
 export function getPriority(category: LogCategory): LogCritical {
   return lib.SDL_LogGetPriority(category);
+}
+
+export function logMessage(category: LogCategory, priority: LogCritical, message: string): void {
+  message = ref.allocCString(message, 'utf8');
+  lib.SDL_LogMessage(category, priority, message);
+}
+
+/**
+ * 重置各 log 种类默认的优先级。
+ */
+export function resetPriority(): void {
+  lib.SDL_LogResetPriorities();
+}
+
+export function setAllPriority(priority: logCritial): void {
+  lib.SDL_LogSetAllPriority(priority);
+}
+
+export function logVerbose(category: LogCategory, message: string): void {
+  message = ref.allocCString(message, 'utf8');
+  lib.SDL_LogVerbose(category, message);
+}
+
+export function setPriority(category: LogCategory, priority: logCritial): void {
+  lib.SDL_LogSetPriority(category, priority);
 }

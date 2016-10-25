@@ -44,7 +44,7 @@ var LogCategory = exports.LogCategory;
 var LogCritical = exports.LogCritical;
 let SDL_LogOutputFunction = ffi.Function(types_1.default.void, [ref.refType(types_1.default.void), types_1.default.int32, types_1.default.uint32, types_1.default.CString]);
 let SDL_LogOutputFunction_P = ref.refType(SDL_LogOutputFunction);
-let lib = Object.create(null);
+let lib = {};
 ffi_1.library({
     SDL_Log: [types_1.default.void, [types_1.default.CString]],
     SDL_LogCritical: [types_1.default.void, [types_1.default.int32, types_1.default.CString]],
@@ -54,6 +54,12 @@ ffi_1.library({
     SDL_LogGetPriority: [types_1.default.uint32, [types_1.default.int32]],
     SDL_LogInfo: [types_1.default.void, [types_1.default.int32, types_1.default.CString]],
     SDL_LogSetOutputFunction: [types_1.default.void, [SDL_LogOutputFunction, types_1.default.void_p]],
+    SDL_LogMessage: [types_1.default.void, [types_1.default.int32, types_1.default.uint32, types_1.default.CString]],
+    SDL_LogResetPriorities: [types_1.default.void, [types_1.default.void]],
+    SDL_LogSetAllPriority: [types_1.default.void, [types_1.default.uint32]],
+    SDL_LogSetPriority: [types_1.default.void, [types_1.default.int32, types_1.default.uint32]],
+    SDL_LogVerbose: [types_1.default.void, [types_1.default.int32, types_1.default.CString]],
+    SDL_LogWarn: [types_1.default.void, [types_1.default.void, types_1.default.int32, types_1.default.CString]]
 }, lib);
 function log(message) {
     lib.SDL_Log(message);
@@ -102,4 +108,29 @@ function getPriority(category) {
     return lib.SDL_LogGetPriority(category);
 }
 exports.getPriority = getPriority;
+function logMessage(category, priority, message) {
+    message = ref.allocCString(message, 'utf8');
+    lib.SDL_LogMessage(category, priority, message);
+}
+exports.logMessage = logMessage;
+/**
+ * 重置各 log 种类默认的优先级。
+ */
+function resetPriority() {
+    lib.SDL_LogResetPriorities();
+}
+exports.resetPriority = resetPriority;
+function setAllPriority(priority) {
+    lib.SDL_LogSetAllPriority(priority);
+}
+exports.setAllPriority = setAllPriority;
+function logVerbose(category, message) {
+    message = ref.allocCString(message, 'utf8');
+    lib.SDL_LogVerbose(category, message);
+}
+exports.logVerbose = logVerbose;
+function setPriority(category, priority) {
+    lib.SDL_LogSetPriority(category, priority);
+}
+exports.setPriority = setPriority;
 //# sourceMappingURL=sdl-log.js.map
