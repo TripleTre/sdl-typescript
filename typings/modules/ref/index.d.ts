@@ -35,5 +35,9 @@ declare module 'ref' {
     size_t: ctype
   }
 
+  export function alloc(type: any, value?: any): any;
+  export function deref(buf: any): any;
+  export function refType(arg: any): any;
+  export function allocCString(str: string, charset: string): any;
   export let types: types;
 }

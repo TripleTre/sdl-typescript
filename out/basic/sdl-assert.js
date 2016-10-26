@@ -1,24 +1,19 @@
 "use strict";
-const struct = require('ref-struct');
+const RefStruct = require('ref-struct');
 const types_1 = require('../types/types');
 const ffi_1 = require('../util/ffi');
 const ffi = require('ffi');
 const ref = require('ref');
 (function (AssertState) {
     AssertState[AssertState["retry"] = 0] = "retry";
-    AssertState[AssertState["0"] = 1] = "0";
-    AssertState[AssertState["break"] = 2] = "break";
-    AssertState[AssertState["1"] = 3] = "1";
-    AssertState[AssertState["abort"] = 4] = "abort";
-    AssertState[AssertState["2"] = 5] = "2";
-    AssertState[AssertState["ignore"] = 6] = "ignore";
-    AssertState[AssertState["3"] = 7] = "3";
-    AssertState[AssertState["alwaysIgnore"] = 8] = "alwaysIgnore";
-    AssertState[AssertState["4"] = 9] = "4";
+    AssertState[AssertState["break"] = 1] = "break";
+    AssertState[AssertState["abort"] = 2] = "abort";
+    AssertState[AssertState["ignore"] = 3] = "ignore";
+    AssertState[AssertState["alwaysIgnore"] = 4] = "alwaysIgnore";
 })(exports.AssertState || (exports.AssertState = {}));
 var AssertState = exports.AssertState;
 ;
-exports.assertData = struct({
+let assertData = RefStruct.struct({
     always_ignore: types_1.default.int,
     trigger_count: types_1.default.uint,
     condition: types_1.default.CString,
@@ -27,7 +22,7 @@ exports.assertData = struct({
     function: types_1.default.CString,
     next: types_1.default.void_p
 });
-let SDL_AssertionHandler = ffi.Function(types_1.default.uint32, [ref.refType(exports.assertData), types_1.default.void_p]);
+let SDL_AssertionHandler = ffi.Function(types_1.default.uint32, [ref.refType(assertData), types_1.default.void_p]);
 let lib = Object.create(null);
 ffi_1.library({
     // SDL_assert: [types.void, []],

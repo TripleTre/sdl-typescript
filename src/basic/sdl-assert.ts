@@ -1,18 +1,18 @@
-import * as struct from 'ref-struct';
+import * as RefStruct from 'ref-struct';
 import types from '../types/types';
 import {library} from '../util/ffi';
 import * as ffi from 'ffi';
 import * as ref from 'ref';
 
 export enum AssertState {
-  retry:  0,
-  break:  1,
-  abort:  2,
-  ignore: 3,
-  alwaysIgnore: 4
+  retry = 0,
+  break = 1,
+  abort = 2,
+  ignore =3,
+  alwaysIgnore =4
 };
 
-export let assertData = struct({
+let assertData = RefStruct.struct({
   always_ignore: types.int, 
   trigger_count: types.uint,
   condition:     types.CString,

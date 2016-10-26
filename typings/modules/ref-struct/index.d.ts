@@ -1,4 +1,3 @@
 declare module 'ref-struct' {
-  function struct(options?): any;
-  export default struct;
+  export function struct(options?: any): any;
 }

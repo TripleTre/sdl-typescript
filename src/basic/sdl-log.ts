@@ -45,7 +45,7 @@ export enum LogCritical {
 let SDL_LogOutputFunction = ffi.Function(types.void, [ref.refType(types.void), types.int32, types.uint32, types.CString]);
 let SDL_LogOutputFunction_P = ref.refType(SDL_LogOutputFunction);
 
-let lib = {};
+let lib: any = {};
 library({
   SDL_Log:                  [types.void, [types.CString]],
   SDL_LogCritical:          [types.void, [types.int32, types.CString]],
@@ -56,11 +56,11 @@ library({
   SDL_LogInfo:              [types.void, [types.int32, types.CString]],
   SDL_LogSetOutputFunction: [types.void, [SDL_LogOutputFunction, types.void_p]],
   SDL_LogMessage:           [types.void, [types.int32, types.uint32, types.CString]],
-  SDL_LogResetPriorities:   [types.void, [types.void]],
+  SDL_LogResetPriorities:   [types.void, []],
   SDL_LogSetAllPriority:    [types.void, [types.uint32]],
   SDL_LogSetPriority:       [types.void, [types.int32, types.uint32]],
   SDL_LogVerbose:           [types.void, [types.int32, types.CString]],
-  SDL_LogWarn:              [types.void, [types.void, types.int32, types.CString]]
+  SDL_LogWarn:              [types.void, [types.int32, types.CString]]
 }, lib);
 
 export function log(message: string): void {
@@ -122,7 +122,7 @@ export function resetPriority(): void {
   lib.SDL_LogResetPriorities();
 }
 
-export function setAllPriority(priority: logCritial): void {
+export function setAllPriority(priority: LogCritical): void {
   lib.SDL_LogSetAllPriority(priority);
 }
 
@@ -131,6 +131,6 @@ export function logVerbose(category: LogCategory, message: string): void {
   lib.SDL_LogVerbose(category, message);
 }
 
-export function setPriority(category: LogCategory, priority: logCritial): void {
+export function setPriority(category: LogCategory, priority: LogCritical): void {
   lib.SDL_LogSetPriority(category, priority);
 }

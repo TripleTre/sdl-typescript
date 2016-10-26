@@ -124,7 +124,7 @@ export enum GLAttr {
   /**
    * OpenGL context sharing; defaults to 0
    */
-  shareWidthCurrentContext = 22
+  shareWidthCurrentContext = 22,
   /**
    * requests sRGB capable visual; defaults to 0 (>= SDL 2.0.1)
    */

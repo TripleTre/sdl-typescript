@@ -41,7 +41,7 @@ let micro = {
    *        1 do not force the SDL app to become a foreground process
    * @default By default the SDL app will be forced to become a foreground process on Mac OS X.
    */
-  SDL_HINT_MAC_BACKGROUND_APP: 'SDL_MAC_BACKGROUND_APP'，
+  SDL_HINT_MAC_BACKGROUND_APP: 'SDL_MAC_BACKGROUND_APP',
   /**
    * A hint that specifies whether ctrl+click should generate a right-click event on Mac.
    * @value 0 disable emulating right click

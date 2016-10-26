@@ -55,11 +55,11 @@ ffi_1.library({
     SDL_LogInfo: [types_1.default.void, [types_1.default.int32, types_1.default.CString]],
     SDL_LogSetOutputFunction: [types_1.default.void, [SDL_LogOutputFunction, types_1.default.void_p]],
     SDL_LogMessage: [types_1.default.void, [types_1.default.int32, types_1.default.uint32, types_1.default.CString]],
-    SDL_LogResetPriorities: [types_1.default.void, [types_1.default.void]],
+    SDL_LogResetPriorities: [types_1.default.void, []],
     SDL_LogSetAllPriority: [types_1.default.void, [types_1.default.uint32]],
     SDL_LogSetPriority: [types_1.default.void, [types_1.default.int32, types_1.default.uint32]],
     SDL_LogVerbose: [types_1.default.void, [types_1.default.int32, types_1.default.CString]],
-    SDL_LogWarn: [types_1.default.void, [types_1.default.void, types_1.default.int32, types_1.default.CString]]
+    SDL_LogWarn: [types_1.default.void, [types_1.default.int32, types_1.default.CString]]
 }, lib);
 function log(message) {
     lib.SDL_Log(message);
