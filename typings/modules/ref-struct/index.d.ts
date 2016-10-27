@@ -1,3 +1,4 @@
 declare module 'ref-struct' {
-  export function struct(options?: any): any;
+  function Struct(options?: any): any;
+  export = Struct;
 }

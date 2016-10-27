@@ -1,5 +1,5 @@
 "use strict";
-const RefStruct = require('ref-struct');
+const Struct = require('ref-struct');
 const types_1 = require('../types/types');
 const ffi_1 = require('../util/ffi');
 const ffi = require('ffi');
@@ -13,7 +13,7 @@ const ref = require('ref');
 })(exports.AssertState || (exports.AssertState = {}));
 var AssertState = exports.AssertState;
 ;
-let assertData = RefStruct.struct({
+let assertData = Struct({
     always_ignore: types_1.default.int,
     trigger_count: types_1.default.uint,
     condition: types_1.default.CString,

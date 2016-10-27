@@ -203,4 +203,4 @@ SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     GLProfile[GLProfile["profileES"] = 4] = "profileES";
 })(exports.GLProfile || (exports.GLProfile = {}));
 var GLProfile = exports.GLProfile;
-//# sourceMappingURL=structs.js.map
+//# sourceMappingURL=enum.js.map

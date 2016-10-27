@@ -1,4 +1,4 @@
-import * as RefStruct from 'ref-struct';
+import Struct = require('ref-struct');
 import types from '../types/types';
 import {library} from '../util/ffi';
 import * as ffi from 'ffi';
@@ -12,7 +12,7 @@ export enum AssertState {
   alwaysIgnore =4
 };
 
-let assertData = RefStruct.struct({
+let assertData = Struct({
   always_ignore: types.int, 
   trigger_count: types.uint,
   condition:     types.CString,
