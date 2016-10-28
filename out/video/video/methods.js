@@ -29,6 +29,10 @@ ffi_1.library({
     SDL_GL_SwapWindow: [types_1.default.void, [types_1.default.void_p]],
     SDL_GL_UnloadLibrary: [types_1.default.void, []],
     SDL_GetClosestDisplayMode: [struct_1.DisplayMode_p, [types_1.default.int, struct_1.DisplayMode_p, struct_1.DisplayMode_p]],
+    SDL_GetCurrentDisplayMode: [types_1.default.int, [types_1.default.int, struct_1.DisplayMode_p]],
+    SDL_GetCurrentVideoDriver: [types_1.default.CString, []],
+    SDL_GetDesktopDisplayMode: [types_1.default.int, [types_1.default.int, struct_1.DisplayMode_p]],
+    // SDL_GetDisplayBounds: [types.int, [types.int, ]]
     SDL_GL_SetAttribute: [types_1.default.int, [types_1.default.uint32, types_1.default.int]]
 }, lib);
 function createWindow(title, x, y, w, h, flags) {
@@ -203,11 +207,10 @@ exports.glUnloadLibrary = glUnloadLibrary;
  * 根据给定的 DisplayMode 返回与其值最接近的一种。(DisplayMode 应该是只有固定几种，与设备有关)
  * @param displayIndex 显示设备序号。
  * @param desired 期望值。
- * @return 返回与期望值最接近的模式，或者 null，调用 getError 获取更多信息。
+ * @return 成功时返回与期望值最接近的模式；失败则返回 null，调用 getError 获取更多信息。
  */
 function getClosestDisplayMode(displayIndex, desired) {
-    let _o_p = ref.alloc('int', 0);
-    desired.driverdata = _o_p;
+    desired.driverdata = ref.alloc('int', 0);
     let desired_p = struct_1.DisplayMode_c(desired).ref();
     let result_p = (new struct_1.DisplayMode_c).ref();
     let ret = lib.SDL_GetClosestDisplayMode(displayIndex, desired_p, result_p);
@@ -224,6 +227,55 @@ function getClosestDisplayMode(displayIndex, desired) {
     };
 }
 exports.getClosestDisplayMode = getClosestDisplayMode;
+/**
+ * 获取当前显示模式信息。
+ * @param {displayIndex} 显示设备序号
+ * @return 成功时返回显示模式对象；失败则返回 null，调用 getError 获取更多信息。
+ */
+function getCurrentClosestDisplayMode(displayIndex) {
+    let result_p = (new struct_1.DisplayMode_c).ref();
+    let ret = lib.SDL_GetCurrentDisplayMode(displayIndex, result_p);
+    if (buffer_util_1.nullOrSelf(ret) === null) {
+        return null;
+    }
+    let result = ref.deref(result_p);
+    return {
+        format: result.format,
+        w: result.w,
+        h: result.h,
+        refresh_rate: result.refresh_rate,
+        driverdata: result.driverdata
+    };
+}
+exports.getCurrentClosestDisplayMode = getCurrentClosestDisplayMode;
+/**
+ * 获取当前显卡驱动程序名称。
+ */
+function getCurrentVideoDriver() {
+    return lib.SDL_GetCurrentVideoDriver();
+}
+exports.getCurrentVideoDriver = getCurrentVideoDriver;
+/**
+ * 获取桌面显示模式。
+ * @param {displayIndex} 显示设备序号
+ * @return 成功时返回显示模式对象；失败则返回 null，调用 getError 获取更多信息。
+ */
+function getDesktopDisplayMode(displayIndex) {
+    let result_p = (new struct_1.DisplayMode_c).ref();
+    let ret = lib.SDL_GetDesktopDisplayMode(displayIndex, result_p);
+    if (ret < 0) {
+        return null;
+    }
+    let result = ref.deref(result_p);
+    return {
+        format: result.format,
+        w: result.w,
+        h: result.h,
+        refresh_rate: result.refresh_rate,
+        driverdata: result.driverdata
+    };
+}
+exports.getDesktopDisplayMode = getDesktopDisplayMode;
 /**
  * 获取当前 gl 上下文中指定属性的实际值。
  * @param {attr} 要查询的 GLAttr 属性。
