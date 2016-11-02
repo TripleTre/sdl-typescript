@@ -5,6 +5,7 @@ const ref = require('ref');
 const sdl_error_1 = require('../../basic/sdl-error');
 const buffer_util_1 = require('../../util/buffer-util');
 const struct_1 = require('./struct');
+const rect_1 = require('../../rect');
 let lib = Object.create(null);
 ffi_1.library({
     SDL_CreateWindow: [types_1.default.void_p, [types_1.default.CString, types_1.default.int, types_1.default.int, types_1.default.int, types_1.default.int, types_1.default.uint32]],
@@ -32,7 +33,7 @@ ffi_1.library({
     SDL_GetCurrentDisplayMode: [types_1.default.int, [types_1.default.int, struct_1.DisplayMode_p]],
     SDL_GetCurrentVideoDriver: [types_1.default.CString, []],
     SDL_GetDesktopDisplayMode: [types_1.default.int, [types_1.default.int, struct_1.DisplayMode_p]],
-    // SDL_GetDisplayBounds: [types.int, [types.int, ]]
+    SDL_GetDisplayBounds: [types_1.default.int, [types_1.default.int, rect_1.Rect_p]],
     SDL_GL_SetAttribute: [types_1.default.int, [types_1.default.uint32, types_1.default.int]]
 }, lib);
 function createWindow(title, x, y, w, h, flags) {
@@ -291,6 +292,21 @@ function glGetAttribute(attr) {
     return ref.deref(ret);
 }
 exports.glGetAttribute = glGetAttribute;
+function getDisplayBounds(displayIndex) {
+    let rect_p = new rect_1.Rect_c().ref(), rect = ref.deref(rect_p);
+    let result = lib.SDL_GetDisplayBounds(displayIndex, rect_p);
+    if (result === 0) {
+        console.log(sdl_error_1.getError());
+        return rect_1.EMPTY_RECT;
+    }
+    return {
+        x: rect.x,
+        y: rect.y,
+        w: rect.w,
+        h: rect.h
+    };
+}
+exports.getDisplayBounds = getDisplayBounds;
 /**
  * 设置 OpenGL 窗口的属性， 必须在创建窗口之前调用。
  * @param {attr} 要设置的属性。

@@ -6,6 +6,7 @@ import {GLAttr} from './enum';
 import * as ffi from 'ffi';
 import {nullOrSelf} from '../../util/buffer-util';
 import {DisplayMode_c, DisplayMode_t, DisplayMode_p} from './struct';
+import {Rect_p, Rect_t, Rect_c, EMPTY_RECT} from '../../rect';
 
 let lib = Object.create(null);
 library({
@@ -34,7 +35,7 @@ library({
   SDL_GetCurrentDisplayMode:   [types.int, [types.int, DisplayMode_p]],
   SDL_GetCurrentVideoDriver:   [types.CString, []],
   SDL_GetDesktopDisplayMode:   [types.int, [types.int, DisplayMode_p]],
-  // SDL_GetDisplayBounds: [types.int, [types.int, ]]
+  SDL_GetDisplayBounds:        [types.int, [types.int, Rect_p]],
   SDL_GL_SetAttribute:         [types.int, [types.uint32, types.int]]
 }, lib);
 
@@ -295,6 +296,21 @@ export function glGetAttribute(attr: GLAttr): number {
     throw new Error('get gl attribute failed, ' + getError());
   }
   return ref.deref(ret);
+}
+
+export function getDisplayBounds(displayIndex: number): Rect_t{
+  let rect_p = new Rect_c().ref(), rect = ref.deref(rect_p);
+  let result = lib.SDL_GetDisplayBounds(displayIndex, rect_p);
+  if (result === 0) {
+    console.log(getError());
+    return EMPTY_RECT;
+  }
+  return {
+    x: rect.x,
+    y: rect.y,
+    w: rect.w,
+    h: rect.h
+  }
 }
 
 /**

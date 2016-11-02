@@ -34,7 +34,7 @@ declare module 'ref' {
     ulonglong: ctype,
     size_t: ctype
   }
-
+  export let NULL;
   export function alloc(type: any, value?: any): any;
   export function deref(buf: any): any;
   export function refType(arg: any): any;
