@@ -1,9 +1,12 @@
 "use strict";
-const sdl_1 = require('./basic/sdl');
+const conosle_1 = require('./log/conosle');
+const console = require('console');
 const sdl_error_1 = require('./basic/sdl-error');
 const video_1 = require('./video/video');
-sdl_1.init(sdl_1.InitOption.SDL_INIT_VIDEO);
-let window = video_1.createWindow('window', 0, 0, 1000, 1000, 0);
+// init(InitOption.SDL_INIT_VIDEO);
+// let window = createWindow('window', 0, 0, 100, 100, 0);
+// let render = createRender(window, -1, renderFlags.targetTexture);
 console.log(sdl_error_1.getError());
-console.log('getDisplayBounds: ', video_1.getDisplayBounds(1));
+conosle_1.error('redere䷍');
+console.log('getDisplayBounds: ', video_1.getDisplayBounds(0));
 //# sourceMappingURL=test.js.map

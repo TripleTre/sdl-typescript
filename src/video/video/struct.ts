@@ -2,6 +2,8 @@ import Struct = require('ref-struct');
 import types from '../../types/types';
 import * as ref from 'ref';
 
+export let Window_p = ref.refType(Struct({}));
+
 export type DisplayMode_t = {
   /**
    * one of the SDL_PixelFormatEnum values;

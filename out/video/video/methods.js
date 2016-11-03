@@ -1,4 +1,6 @@
 "use strict";
+const index_1 = require('../../render/index');
+const console = require('console');
 const ffi_1 = require('../../util/ffi');
 const types_1 = require('../../types/types');
 const ref = require('ref');
@@ -8,9 +10,9 @@ const struct_1 = require('./struct');
 const rect_1 = require('../../rect');
 let lib = Object.create(null);
 ffi_1.library({
-    SDL_CreateWindow: [types_1.default.void_p, [types_1.default.CString, types_1.default.int, types_1.default.int, types_1.default.int, types_1.default.int, types_1.default.uint32]],
-    SDL_CreateWindowAndRenderer: [types_1.default.int, [types_1.default.int, types_1.default.int, types_1.default.uint32, types_1.default.void_p, types_1.default.void_p]],
-    SDL_CreateWindowFrom: [types_1.default.void_p, [types_1.default.void_p]],
+    SDL_CreateWindow: [struct_1.Window_p, [types_1.default.CString, types_1.default.int, types_1.default.int, types_1.default.int, types_1.default.int, types_1.default.uint32]],
+    SDL_CreateWindowAndRenderer: [types_1.default.int, [types_1.default.int, types_1.default.int, types_1.default.uint32, ref.refType(struct_1.Window_p), ref.refType(index_1.Render_p)]],
+    SDL_CreateWindowFrom: [struct_1.Window_p, [types_1.default.void_p]],
     SDL_DestroyWindow: [types_1.default.void, [types_1.default.void_p]],
     SDL_DisableScreenSaver: [types_1.default.void, []],
     SDL_EnableScreenSaver: [types_1.default.void, []],
@@ -292,12 +294,17 @@ function glGetAttribute(attr) {
     return ref.deref(ret);
 }
 exports.glGetAttribute = glGetAttribute;
+/**
+ * 返回显示设备的像素尺寸。
+ * @param {displayIndex} 显示设备序号
+ * @return 表示显示设备尺寸的矩形， 如果出错返回 null
+ */
 function getDisplayBounds(displayIndex) {
-    let rect_p = new rect_1.Rect_c().ref(), rect = ref.deref(rect_p);
+    let rect_p = new rect_1.Rect_c(rect_1.EMPTY_RECT).ref(), rect = ref.deref(rect_p);
     let result = lib.SDL_GetDisplayBounds(displayIndex, rect_p);
-    if (result === 0) {
+    if (result < 0) {
         console.log(sdl_error_1.getError());
-        return rect_1.EMPTY_RECT;
+        return null;
     }
     return {
         x: rect.x,

@@ -1,3 +1,6 @@
+import {Render_p} from '../../render/index';
+import * as path from 'path';
+import * as console from 'console';
 import {library} from '../../util/ffi';
 import types from '../../types/types';
 import * as ref from 'ref';
@@ -5,14 +8,15 @@ import {getError} from '../../basic/sdl-error';
 import {GLAttr} from './enum';
 import * as ffi from 'ffi';
 import {nullOrSelf} from '../../util/buffer-util';
-import {DisplayMode_c, DisplayMode_t, DisplayMode_p} from './struct';
+import {Window_p, DisplayMode_p, DisplayMode_t, DisplayMode_c} from './struct';
 import {Rect_p, Rect_t, Rect_c, EMPTY_RECT} from '../../rect';
+
 
 let lib = Object.create(null);
 library({
-  SDL_CreateWindow:            [types.void_p, [types.CString, types.int, types.int, types.int, types.int, types.uint32]],
-  SDL_CreateWindowAndRenderer: [types.int, [types.int, types.int, types.uint32, types.void_p, types.void_p]],
-  SDL_CreateWindowFrom:        [types.void_p, [types.void_p]],
+  SDL_CreateWindow:            [Window_p, [types.CString, types.int, types.int, types.int, types.int, types.uint32]],
+  SDL_CreateWindowAndRenderer: [types.int, [types.int, types.int, types.uint32, ref.refType(Window_p), ref.refType(Render_p)]],
+  SDL_CreateWindowFrom:        [Window_p, [types.void_p]],
   SDL_DestroyWindow:           [types.void, [types.void_p]],
   SDL_DisableScreenSaver:      [types.void, []],
   SDL_EnableScreenSaver:       [types.void, []],
@@ -298,12 +302,17 @@ export function glGetAttribute(attr: GLAttr): number {
   return ref.deref(ret);
 }
 
+/**
+ * 返回显示设备的像素尺寸。
+ * @param {displayIndex} 显示设备序号
+ * @return 表示显示设备尺寸的矩形， 如果出错返回 null
+ */
 export function getDisplayBounds(displayIndex: number): Rect_t{
-  let rect_p = new Rect_c().ref(), rect = ref.deref(rect_p);
+  let rect_p = new Rect_c(EMPTY_RECT).ref(), rect = ref.deref(rect_p);
   let result = lib.SDL_GetDisplayBounds(displayIndex, rect_p);
-  if (result === 0) {
+  if (result < 0) {
     console.log(getError());
-    return EMPTY_RECT;
+    return null;
   }
   return {
     x: rect.x,

@@ -2,6 +2,7 @@
 const Struct = require('ref-struct');
 const types_1 = require('../../types/types');
 const ref = require('ref');
+exports.Window_p = ref.refType(Struct({}));
 exports.DisplayMode_c = Struct({
     format: types_1.default.uint32,
     w: types_1.default.int,
