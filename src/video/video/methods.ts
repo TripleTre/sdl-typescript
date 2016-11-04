@@ -1,4 +1,4 @@
-import {Render_p} from '../../render/index';
+import {renderFlags, Render_p} from '../../render/index';
 import * as path from 'path';
 import * as console from 'console';
 import {library} from '../../util/ffi';
