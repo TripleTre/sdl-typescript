@@ -34,13 +34,13 @@ function strWrap(str, preSpace = 0) {
     const FIX = '│';
     const PRESPACE = makeWhitespace(preSpace);
     while (index < str.length) {
-        let subItem = str.substr(index, 76 - preSpace);
-        ret += FIX + PRESPACE + subItem + makeWhitespace(76 - subItem.length - preSpace) + '\n';
-        index = index + 76 - preSpace;
+        let subItem = str.substr(index, 128 - preSpace);
+        ret += FIX + PRESPACE + subItem + makeWhitespace(128 - subItem.length - preSpace) + '\n';
+        index = index + 128 - preSpace;
     }
     return ret;
 }
 function makeWhitespace(count) {
     return Array(count + 1).join(' ').toString();
 }
-//# sourceMappingURL=conosle.js.map
+//# sourceMappingURL=console.js.map

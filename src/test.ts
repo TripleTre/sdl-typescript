@@ -1,4 +1,4 @@
-import {error} from './log/conosle';
+import {error} from './log/console';
 import {renderFlags, createRender} from './render/index';
 import * as console from 'console';
 import {init, InitOption} from './basic/sdl';
@@ -11,10 +11,4 @@ import * as ref from 'ref';
 import {PixelFormat} from './pixels';
 import {enclosePoints, hasIntersection, pointInRect, unionRect} from './rect';
 
-
-// init(InitOption.SDL_INIT_VIDEO);
-// let window = createWindow('window', 0, 0, 100, 100, 0);
-// let render = createRender(window, -1, renderFlags.targetTexture);
-console.log(getError());
-error('redere䷍');
-console.log('getDisplayBounds: ', getDisplayBounds(0));
+getDisplayBounds(0);

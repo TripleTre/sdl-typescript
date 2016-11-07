@@ -1,6 +1,5 @@
 "use strict";
 const index_1 = require('../../render/index');
-const console = require('console');
 const ffi_1 = require('../../util/ffi');
 const types_1 = require('../../types/types');
 const ref = require('ref');
@@ -8,6 +7,7 @@ const sdl_error_1 = require('../../basic/sdl-error');
 const buffer_util_1 = require('../../util/buffer-util');
 const struct_1 = require('./struct');
 const rect_1 = require('../../rect');
+const console_1 = require('../../log/console');
 let lib = Object.create(null);
 ffi_1.library({
     SDL_CreateWindow: [struct_1.Window_p, [types_1.default.CString, types_1.default.int, types_1.default.int, types_1.default.int, types_1.default.int, types_1.default.uint32]],
@@ -41,7 +41,8 @@ ffi_1.library({
 function createWindow(title, x, y, w, h, flags) {
     let ret = lib.SDL_CreateWindow(title, x, y, w, h, flags);
     if (ret == null) {
-        throw new Error('create window failed, ' + sdl_error_1.getError());
+        console_1.error(sdl_error_1.getError());
+        return null;
     }
     return ret;
 }
@@ -54,7 +55,11 @@ function createWindowAndRenderer(w, h, flags) {
     let renderer = ref.alloc(types_1.default.void_p);
     let ret = lib.SDL_CreateWindowAndRenderer(w, h, flags, window, renderer);
     if (ret < 0) {
-        throw new Error('create window failed, ' + sdl_error_1.getError());
+        console_1.error(sdl_error_1.getError());
+        return {
+            window: null,
+            renderer: null
+        };
     }
     return {
         window,
@@ -113,6 +118,7 @@ exports.glGetCurrentWindow = glGetCurrentWindow;
 // todo 这个函数与 SDL_GetWindowSize 在高分屏上有什么区别
 /**
  * 获取窗口的可绘制区域大小，单位像素。
+ * @param {SdlWindow_t} window 指定窗口
  * @return {w: number, h: number}
  */
 function glGetDrawableSize(window) {
@@ -127,8 +133,8 @@ function glGetDrawableSize(window) {
 exports.glGetDrawableSize = glGetDrawableSize;
 /**
  * 根据名字获取 openGL 函数。
- * @param {creator} ffi.Function 生成的对象， 用来生成 js 函数。
- * @param {func} 要获取的 openGL 函数名称
+ * @param {any} creator ffi.Function 生成的对象， 用来生成 js 函数。
+ * @param {string} func 要获取的 openGL 函数名称
  * @return 转换后的 js 函数。
  */
 function glGetProcAddress(creator, func) {
@@ -149,7 +155,7 @@ exports.glGetSwapInterval = glGetSwapInterval;
 /**
  * 动态加载 openGL 库， 之后可以调用 glGetProcAddress 获取 openGL 函数。 此函数必须在初始化 InitOption.SDL_INIT_VIDEO 之后，
  * 创建 openGL 窗口之前调用。
- * @param {path} 平台相关的 openGL 库名称，或者不传参数加载默认的库。
+ * @param {string} path 平台相关的 openGL 库名称，或者不传参数加载默认的库。
  * @return 0 表示操作成功。
  *         负值 代表错误代码， 调用 getError 获取更多信息。
  */
@@ -177,7 +183,7 @@ function glResetArrtibutes() {
 exports.glResetArrtibutes = glResetArrtibutes;
 /**
  * 设置交换缓冲区的间隔。
- * @param {interval} 0 立即刷新；
+ * @param {number} interval 0 立即刷新；
  *                   1 垂直同步；
  *                  -1 Some systems allow specifying -1 for the interval, to enable late swap tearing. Late swap
  *                     tearing works the same as vsync, but if you've already missed the vertical retrace for a
@@ -194,6 +200,7 @@ function glSetSwapInterval(interval) {
 exports.glSetSwapInterval = glSetSwapInterval;
 /**
  * 刷新使用 opengl 渲染的窗口。
+ * @param {SdlWindow_t} window 要刷新的窗口
  */
 function glSwapWindow(window) {
     lib.SDL_GL_SwapWindow(window);
@@ -208,8 +215,8 @@ function glUnloadLibrary() {
 exports.glUnloadLibrary = glUnloadLibrary;
 /**
  * 根据给定的 DisplayMode 返回与其值最接近的一种。(DisplayMode 应该是只有固定几种，与设备有关)
- * @param displayIndex 显示设备序号。
- * @param desired 期望值。
+ * @param {number} displayIndex 显示设备序号。
+ * @param {DisplayMode_t} desired 期望值。
  * @return 成功时返回与期望值最接近的模式；失败则返回 null，调用 getError 获取更多信息。
  */
 function getClosestDisplayMode(displayIndex, desired) {
@@ -218,6 +225,7 @@ function getClosestDisplayMode(displayIndex, desired) {
     let result_p = (new struct_1.DisplayMode_c).ref();
     let ret = lib.SDL_GetClosestDisplayMode(displayIndex, desired_p, result_p);
     if (buffer_util_1.nullOrSelf(ret) === null) {
+        console_1.error(sdl_error_1.getError());
         return null;
     }
     let result = ref.deref(result_p);
@@ -232,13 +240,14 @@ function getClosestDisplayMode(displayIndex, desired) {
 exports.getClosestDisplayMode = getClosestDisplayMode;
 /**
  * 获取当前显示模式信息。
- * @param {displayIndex} 显示设备序号
+ * @param {number} displayIndex 显示设备序号
  * @return 成功时返回显示模式对象；失败则返回 null，调用 getError 获取更多信息。
  */
 function getCurrentClosestDisplayMode(displayIndex) {
     let result_p = (new struct_1.DisplayMode_c).ref();
     let ret = lib.SDL_GetCurrentDisplayMode(displayIndex, result_p);
     if (buffer_util_1.nullOrSelf(ret) === null) {
+        console_1.error(sdl_error_1.getError());
         return null;
     }
     let result = ref.deref(result_p);
@@ -260,13 +269,14 @@ function getCurrentVideoDriver() {
 exports.getCurrentVideoDriver = getCurrentVideoDriver;
 /**
  * 获取桌面显示模式。
- * @param {displayIndex} 显示设备序号
+ * @param {number} displayIndex 显示设备序号
  * @return 成功时返回显示模式对象；失败则返回 null，调用 getError 获取更多信息。
  */
 function getDesktopDisplayMode(displayIndex) {
     let result_p = (new struct_1.DisplayMode_c).ref();
     let ret = lib.SDL_GetDesktopDisplayMode(displayIndex, result_p);
     if (ret < 0) {
+        console_1.error(sdl_error_1.getError());
         return null;
     }
     let result = ref.deref(result_p);
@@ -281,7 +291,7 @@ function getDesktopDisplayMode(displayIndex) {
 exports.getDesktopDisplayMode = getDesktopDisplayMode;
 /**
  * 获取当前 gl 上下文中指定属性的实际值。
- * @param {attr} 要查询的 GLAttr 属性。
+ * @param {GLAttr} attr 要查询的 GLAttr 属性。
  * @return 要查询属性的值。
  */
 function glGetAttribute(attr) {
@@ -289,21 +299,22 @@ function glGetAttribute(attr) {
     let ret = ref.alloc('int');
     let res = lib.SDL_GL_GetAttribute(attr, ret);
     if (res < 0) {
-        throw new Error('get gl attribute failed, ' + sdl_error_1.getError());
+        console_1.error(sdl_error_1.getError());
+        return res;
     }
     return ref.deref(ret);
 }
 exports.glGetAttribute = glGetAttribute;
 /**
  * 返回显示设备的像素尺寸。
- * @param {displayIndex} 显示设备序号
+ * @param {number} displayIndex 显示设备序号
  * @return 表示显示设备尺寸的矩形， 如果出错返回 null
  */
 function getDisplayBounds(displayIndex) {
     let rect_p = new rect_1.Rect_c(rect_1.EMPTY_RECT).ref(), rect = ref.deref(rect_p);
     let result = lib.SDL_GetDisplayBounds(displayIndex, rect_p);
     if (result < 0) {
-        console.log(sdl_error_1.getError());
+        console_1.error(sdl_error_1.getError());
         return null;
     }
     return {
@@ -316,14 +327,14 @@ function getDisplayBounds(displayIndex) {
 exports.getDisplayBounds = getDisplayBounds;
 /**
  * 设置 OpenGL 窗口的属性， 必须在创建窗口之前调用。
- * @param {attr} 要设置的属性。
- * @param {value} 要设置的属性值。
+ * @param {GLAttr} attr 要设置的属性。
+ * @param {number} value 要设置的属性值。
  *
  */
 function glSetAttribute(attr, value) {
     let res = lib.SDL_GL_SetAttribute(attr, value);
     if (res < 0) {
-        throw new Error('set gl attribute failed, ' + sdl_error_1.getError());
+        console_1.error(sdl_error_1.getError());
     }
     return res;
 }
