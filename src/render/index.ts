@@ -26,9 +26,9 @@ library({
 
 /**
  * 为窗口创建 2D 绘图环境. 
- * @param {window}
- * @param {index} the index of the rendering driver to initialize, or -1 to initialize the first one supporting the requested flags
- * @param {flags} 0, or one or more SDL_RendererFlags OR'd together;
+ * @param {SdlWindow_t} window
+ * @param {number} index the index of the rendering driver to initialize, or -1 to initialize the first one supporting the requested flags
+ * @param {number} flags 0, or one or more SDL_RendererFlags OR'd together;
  */
 export function createRender(window: SdlWindow_t, index: number, flags: number): Render_t{
   return lib.SDL_CreateRenderer(window, index, flags);

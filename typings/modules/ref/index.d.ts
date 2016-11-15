@@ -39,5 +39,6 @@ declare module 'ref' {
   export function deref(buf: any): any;
   export function refType(arg: any): any;
   export function allocCString(str: string, charset: string): any;
+  export function readCString(arg: any): string;
   export let types: types;
 }

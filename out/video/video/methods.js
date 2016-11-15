@@ -36,6 +36,16 @@ ffi_1.library({
     SDL_GetCurrentVideoDriver: [types_1.default.CString, []],
     SDL_GetDesktopDisplayMode: [types_1.default.int, [types_1.default.int, struct_1.DisplayMode_p]],
     SDL_GetDisplayBounds: [types_1.default.int, [types_1.default.int, rect_1.Rect_p]],
+    SDL_GetDisplayDPI: [types_1.default.int, [types_1.default.int, types_1.default.float_p, types_1.default.float_p, types_1.default.float_p]],
+    SDL_GetDisplayMode: [types_1.default.int, [types_1.default.int, types_1.default.int, struct_1.DisplayMode_p]],
+    SDL_GetDisplayName: [types_1.default.CString_p, [types_1.default.int]],
+    // SDL_GetDisplayUsableBounds: [types.int, [types.int, Rect_p]],
+    SDL_GetGrabbedWindow: [struct_1.Window_p, []],
+    SDL_GetNumDisplayModes: [types_1.default.int, [types_1.default.int]],
+    SDL_GetNumVideoDisplays: [types_1.default.int, []],
+    SDL_GetNumVideoDrivers: [types_1.default.int, []],
+    SDL_GetVideoDriver: [types_1.default.CString_p, [types_1.default.int]],
+    SDL_GetWindowBordersSize: [types_1.default.int, [struct_1.Window_p, types_1.default.int_p, types_1.default.int_p, types_1.default.int_p, types_1.default.int_p]],
     SDL_GL_SetAttribute: [types_1.default.int, [types_1.default.uint32, types_1.default.int]]
 }, lib);
 function createWindow(title, x, y, w, h, flags) {
@@ -325,6 +335,143 @@ function getDisplayBounds(displayIndex) {
     };
 }
 exports.getDisplayBounds = getDisplayBounds;
+// todo error
+function getDisplayDPI(displayIndex) {
+    let ddpi = ref.alloc('float', 0), hdpi = ref.alloc('float', 0), vdpi = ref.alloc('float', 0), result = lib.SDL_GetDisplayDPI(displayIndex, ddpi, hdpi, vdpi);
+    if (result < 0) {
+        console_1.error(sdl_error_1.getError());
+        return null;
+    }
+    return {
+        ddpi: ref.deref(ddpi),
+        hdpi: ref.deref(hdpi),
+        vdpi: ref.deref(vdpi)
+    };
+}
+exports.getDisplayDPI = getDisplayDPI;
+/**
+ * Use this function to get information about a specific display mode.
+ * @param {number} displayIndex the index of the display to query
+ * @param {number} modeIndex the index of the display mode to query
+ * @return {DisplayMode_t}
+ */
+function getDisplayMode(displayIndex, modeIndex) {
+    let displayMode, display_p, result;
+    display_p = new struct_1.DisplayMode_c().ref();
+    result = lib.SDL_GetDisplayMode(displayIndex, modeIndex, display_p);
+    if (result < 0) {
+        console_1.error(sdl_error_1.getError());
+        return null;
+    }
+    displayMode = ref.deref(display_p);
+    return {
+        format: displayMode.format,
+        w: displayMode.w,
+        h: displayMode.h,
+        refresh_rate: displayMode.refresh_rate,
+        driverdata: displayMode.driverdata
+    };
+}
+exports.getDisplayMode = getDisplayMode;
+/**
+ * Use this function to get the name of a display in UTF-8 encoding.
+ * @param {number} displayIndex the index of display from which the name should be queried
+ * @return Returns the name of a display or NULL for an invalid display index or failure;
+ */
+function getDisplayName(displayIndex) {
+    let result;
+    result = lib.SDL_GetDisplayName(displayIndex);
+    if (result.length === 0) {
+        console_1.error(sdl_error_1.getError());
+        return null;
+    }
+    return ref.readCString(result);
+}
+exports.getDisplayName = getDisplayName;
+/**
+ * Use this function to get the usable desktop area represented by a display, with the primary display located at 0,0.
+ * @param {number} displayIndex the index of the display to query the usable bounds from
+ * @return {Rect_t} the SDL_Rect structure filled in with the display bounds
+ */
+/* export function getDisplayUsableBounds(displayIndex: number): Rect_t {
+  let result, rect, rect_p = new Rect_c().ref();
+  result = lib.SDL_GetDisplayUsableBounds(displayIndex, rect_p);
+  if (result < 0) {
+    error(getError());
+    return null;
+  }
+  rect = ref.deref(rect_p);
+  return {
+    x: rect.x,
+    y: rect.y,
+    w: rect.w,
+    h: rect.h
+  }
+} */
+/**
+ * Use this function to get the window that currently has an input grab enabled.
+ */
+function getGrabbedWindow() {
+    return lib.SDL_GetGrabbedWindow();
+}
+exports.getGrabbedWindow = getGrabbedWindow;
+/**
+ * Use this function to get the number of available display modes.
+ * @param {number} displayIndex the index of the display to query.
+ */
+function getNumDisplayModes(displayIndex) {
+    return lib.SDL_GetNumDisplayModes(displayIndex);
+}
+exports.getNumDisplayModes = getNumDisplayModes;
+/**
+ * Use this function to get the number of available video displays.
+ * @return Returns a number >= 1 or a negative error code on failure;
+ */
+function getNumVideoDisplays() {
+    let result = lib.SDL_GetNumVideoDisplays();
+    if (result < 1) {
+        console_1.error(sdl_error_1.getError());
+    }
+    return result;
+}
+exports.getNumVideoDisplays = getNumVideoDisplays;
+/**
+ * Use this function to get the number of video drivers compiled into SDL.
+ * @return Returns a number >= 1 on success or a negative error code on failure;
+ */
+function getNumVideoDrivers() {
+    let result = lib.SDL_GetNumVideoDrivers();
+    if (result < 1) {
+        console_1.error(sdl_error_1.getError());
+    }
+    return result;
+}
+exports.getNumVideoDrivers = getNumVideoDrivers;
+/**
+ * Use this function to get the name of a built in video driver.
+ * @param {number} driverIndex the index of a video driver
+ * @return Returns the name of the video driver with the given index.
+ */
+function getVideoDriver(driverIndex) {
+    let result = lib.SDL_GetVideoDriver(driverIndex);
+    if (result.length === 0) {
+        return null;
+    }
+    return ref.readCString(result);
+}
+exports.getVideoDriver = getVideoDriver;
+function getWindowBordersSize(window) {
+    let top, left, bottom, right;
+    top = ref.alloc('int', 0);
+    left = ref.alloc('int', 0);
+    bottom = ref.alloc('int', 0);
+    right = ref.alloc('int', 0);
+    let result = lib.SDL_GetWindowBordersSize(window, top, left, bottom, right);
+    if (result < 0) {
+        console_1.error(sdl_error_1.getError());
+    }
+}
+exports.getWindowBordersSize = getWindowBordersSize;
 /**
  * 设置 OpenGL 窗口的属性， 必须在创建窗口之前调用。
  * @param {GLAttr} attr 要设置的属性。

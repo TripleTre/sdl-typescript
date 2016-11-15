@@ -16,7 +16,6 @@ function sourceInfo() {
     let e = new Error(), file, line, column, fileLineColumn, relativeMapPath, absoluteMapPath, mapContent, mapConsumer, mapPhaserResult;
     fileLineColumn = e.stack.match(/\([/\\].*\)/g)[2];
     [, file, line, column] = fileLineColumn.match(/\((.+):(\d+):(\d+)/);
-    // debugger;
     relativeMapPath = fs.readFileSync(file, 'utf-8').match(/^.*sourceMappingURL=(.*$)/m)[1];
     absoluteMapPath = path.resolve(path.dirname(file), relativeMapPath);
     mapContent = fs.readFileSync(absoluteMapPath, 'utf-8');

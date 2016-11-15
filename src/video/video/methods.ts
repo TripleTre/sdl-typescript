@@ -14,33 +14,43 @@ import {error} from '../../log/console';
 
 let lib = Object.create(null);
 library({
-  SDL_CreateWindow:            [Window_p, [types.CString, types.int, types.int, types.int, types.int, types.uint32]],
-  SDL_CreateWindowAndRenderer: [types.int, [types.int, types.int, types.uint32, ref.refType(Window_p), ref.refType(Render_p)]],
-  SDL_CreateWindowFrom:        [Window_p, [types.void_p]],
-  SDL_DestroyWindow:           [types.void, [types.void_p]],
-  SDL_DisableScreenSaver:      [types.void, []],
-  SDL_EnableScreenSaver:       [types.void, []],
-  SDL_GL_CreateContext:        [types.void_p, [types.void_p]],
-  SDL_GL_DeleteContext:        [types.void, [types.void_p]],
-  SDL_GL_ExtensionSupported:   [types.uint8, [types.CString]],
-  SDL_GL_GetAttribute:         [types.int, [types.uint32, types.int_p]],
-  SDL_GL_GetCurrentContext:    [types.void_p, []],
-  SDL_GL_GetCurrentWindow:     [types.void_p, []],
-  SDL_GL_GetDrawableSize:      [types.void, [types.void_p, types.int_p, types.int_p]],
-  SDL_GL_GetProcAddress:       [types.void_p, [types.CString]],
-  SDL_GL_GetSwapInterval:      [types.int, []],
-  SDL_GL_LoadLibrary:          [types.int, [types.CString]],
-  SDL_GL_MakeCurrent:          [types.int, [types.void_p, types.void_p]],
-  SDL_GL_ResetAttributes:      [types.void, []],
-  SDL_GL_SetSwapInterval:      [types.int, [types.int]],
-  SDL_GL_SwapWindow:           [types.void, [types.void_p]],
-  SDL_GL_UnloadLibrary:        [types.void, []],
-  SDL_GetClosestDisplayMode:   [DisplayMode_p, [types.int, DisplayMode_p, DisplayMode_p]],
-  SDL_GetCurrentDisplayMode:   [types.int, [types.int, DisplayMode_p]],
-  SDL_GetCurrentVideoDriver:   [types.CString, []],
-  SDL_GetDesktopDisplayMode:   [types.int, [types.int, DisplayMode_p]],
-  SDL_GetDisplayBounds:        [types.int, [types.int, Rect_p]],
-  SDL_GL_SetAttribute:         [types.int, [types.uint32, types.int]]
+  SDL_CreateWindow:              [Window_p, [types.CString, types.int, types.int, types.int, types.int, types.uint32]],
+  SDL_CreateWindowAndRenderer:   [types.int, [types.int, types.int, types.uint32, ref.refType(Window_p), ref.refType(Render_p)]],
+  SDL_CreateWindowFrom:          [Window_p, [types.void_p]],
+  SDL_DestroyWindow:             [types.void, [types.void_p]],
+  SDL_DisableScreenSaver:        [types.void, []],
+  SDL_EnableScreenSaver:         [types.void, []],
+  SDL_GL_CreateContext:          [types.void_p, [types.void_p]],
+  SDL_GL_DeleteContext:          [types.void, [types.void_p]],
+  SDL_GL_ExtensionSupported:     [types.uint8, [types.CString]],
+  SDL_GL_GetAttribute:           [types.int, [types.uint32, types.int_p]],
+  SDL_GL_GetCurrentContext:      [types.void_p, []],
+  SDL_GL_GetCurrentWindow:       [types.void_p, []],
+  SDL_GL_GetDrawableSize:        [types.void, [types.void_p, types.int_p, types.int_p]],
+  SDL_GL_GetProcAddress:         [types.void_p, [types.CString]],
+  SDL_GL_GetSwapInterval:        [types.int, []],
+  SDL_GL_LoadLibrary:            [types.int, [types.CString]],
+  SDL_GL_MakeCurrent:            [types.int, [types.void_p, types.void_p]],
+  SDL_GL_ResetAttributes:        [types.void, []],
+  SDL_GL_SetSwapInterval:        [types.int, [types.int]],
+  SDL_GL_SwapWindow:             [types.void, [types.void_p]],
+  SDL_GL_UnloadLibrary:          [types.void, []],
+  SDL_GetClosestDisplayMode:     [DisplayMode_p, [types.int, DisplayMode_p, DisplayMode_p]],
+  SDL_GetCurrentDisplayMode:     [types.int, [types.int, DisplayMode_p]],
+  SDL_GetCurrentVideoDriver:     [types.CString, []],
+  SDL_GetDesktopDisplayMode:     [types.int, [types.int, DisplayMode_p]],
+  SDL_GetDisplayBounds:          [types.int, [types.int, Rect_p]],
+  SDL_GetDisplayDPI:             [types.int, [types.int, types.float_p, types.float_p, types.float_p]],
+  SDL_GetDisplayMode:            [types.int, [types.int, types.int, DisplayMode_p]],
+  SDL_GetDisplayName:            [types.CString_p, [types.int]],
+  // SDL_GetDisplayUsableBounds: [types.int, [types.int, Rect_p]],
+  SDL_GetGrabbedWindow:          [Window_p, []],
+  SDL_GetNumDisplayModes:        [types.int, [types.int]],
+  SDL_GetNumVideoDisplays:       [types.int, []],
+  SDL_GetNumVideoDrivers:        [types.int, []],
+  SDL_GetVideoDriver:            [types.CString_p, [types.int]],
+  SDL_GetWindowBordersSize:      [types.int, [Window_p, types.int_p, types.int_p, types.int_p, types.int_p]],
+  SDL_GL_SetAttribute:           [types.int, [types.uint32, types.int]]
 }, lib);
 
 export type SdlWindow_t = {};
@@ -330,6 +340,147 @@ export function getDisplayBounds(displayIndex: number): Rect_t{
     y: rect.y,
     w: rect.w,
     h: rect.h
+  }
+}
+
+// todo error
+export function getDisplayDPI(displayIndex: number): any {
+  let ddpi = ref.alloc('float', 0)
+     ,hdpi = ref.alloc('float', 0)
+     ,vdpi = ref.alloc('float', 0)
+     ,result = lib.SDL_GetDisplayDPI(displayIndex, ddpi, hdpi, vdpi);
+  if (result < 0) {
+    error(getError());
+    return null;
+  }
+  return {
+    ddpi: ref.deref(ddpi),
+    hdpi: ref.deref(hdpi),
+    vdpi: ref.deref(vdpi)
+  }
+}
+
+/**
+ * Use this function to get information about a specific display mode. 
+ * @param {number} displayIndex the index of the display to query
+ * @param {number} modeIndex the index of the display mode to query
+ * @return {DisplayMode_t}
+ */
+export function getDisplayMode(displayIndex: number, modeIndex: number): DisplayMode_t {
+  let displayMode, display_p, result;
+  display_p = new DisplayMode_c().ref()
+  result = lib.SDL_GetDisplayMode(displayIndex, modeIndex, display_p);
+  if (result < 0) {
+    error(getError());
+    return null;
+  }
+  displayMode = ref.deref(display_p);
+  return {
+    format: displayMode.format,
+    w: displayMode.w,
+    h: displayMode.h,
+    refresh_rate: displayMode.refresh_rate,
+    driverdata: displayMode.driverdata
+  }
+}
+
+/**
+ * Use this function to get the name of a display in UTF-8 encoding. 
+ * @param {number} displayIndex the index of display from which the name should be queried
+ * @return Returns the name of a display or NULL for an invalid display index or failure;
+ */
+export function getDisplayName(displayIndex: number): string {
+  let result;
+  result = lib.SDL_GetDisplayName(displayIndex);
+  if (result.length === 0) {
+    error(getError());
+    return null;
+  }
+  return ref.readCString(result);
+}
+
+/**
+ * Use this function to get the usable desktop area represented by a display, with the primary display located at 0,0. 
+ * @param {number} displayIndex the index of the display to query the usable bounds from
+ * @return {Rect_t} the SDL_Rect structure filled in with the display bounds
+ */
+/* export function getDisplayUsableBounds(displayIndex: number): Rect_t {
+  let result, rect, rect_p = new Rect_c().ref();
+  result = lib.SDL_GetDisplayUsableBounds(displayIndex, rect_p);
+  if (result < 0) {
+    error(getError());
+    return null;
+  }
+  rect = ref.deref(rect_p);
+  return {
+    x: rect.x,
+    y: rect.y,
+    w: rect.w,
+    h: rect.h
+  }
+} */
+
+/**
+ * Use this function to get the window that currently has an input grab enabled. 
+ */
+export function getGrabbedWindow(): SdlWindow_t {
+  return lib.SDL_GetGrabbedWindow();
+}
+
+/**
+ * Use this function to get the number of available display modes.
+ * @param {number} displayIndex the index of the display to query.
+ */
+export function getNumDisplayModes(displayIndex: number): number {
+  return lib.SDL_GetNumDisplayModes(displayIndex);
+}
+
+/**
+ * Use this function to get the number of available video displays. 
+ * @return Returns a number >= 1 or a negative error code on failure; 
+ */
+export function getNumVideoDisplays(): number {
+  let result = lib.SDL_GetNumVideoDisplays();
+  if (result < 1) {
+    error(getError());
+  }
+  return result;
+}
+
+/**
+ * Use this function to get the number of video drivers compiled into SDL. 
+ * @return Returns a number >= 1 on success or a negative error code on failure;
+ */
+export function getNumVideoDrivers(): number {
+  let result = lib.SDL_GetNumVideoDrivers();
+  if (result < 1) {
+    error(getError());
+  }
+  return result;
+}
+
+/**
+ * Use this function to get the name of a built in video driver. 
+ * @param {number} driverIndex the index of a video driver
+ * @return Returns the name of the video driver with the given index.
+ */
+export function getVideoDriver(driverIndex: number): string {
+  let result = lib.SDL_GetVideoDriver(driverIndex);
+  if (result.length === 0) {
+    return null;
+  }
+  return ref.readCString(result);
+}
+
+export function getWindowBordersSize(window: SdlWindow_t): any {
+  let top, left, bottom, right;
+  top = ref.alloc('int', 0);
+  left = ref.alloc('int', 0);
+  bottom = ref.alloc('int', 0);
+  right = ref.alloc('int', 0);
+  let result = lib.SDL_GetWindowBordersSize(window, top, left, bottom, right);
+  if (result < 0) {
+    error(getError());
   }
 }
 
